@@ -5,6 +5,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.client.impl.multipart.QuarkusMultipartForm;
 import org.jboss.resteasy.reactive.multipart.FileDownload;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataOutput;
@@ -115,6 +116,14 @@ public class ClientTest {
         var multipartFormDataOutput = new MultipartFormDataOutput();
         multipartFormDataOutput.addFormData("file", Files.createTempFile("bla", ".pdf"), MediaType.valueOf("application/pdf"), "bla.pdf");
         var res = client.multipart(multipartFormDataOutput);
+        assertEquals("multi", res);
+    }
+
+    @Test
+    public void quarkusMultipartForm() throws Exception {
+        var form = new QuarkusMultipartForm();
+        form.binaryFileUpload("file", "bla.pdf", Files.createTempFile("bla", ".pdf").toString(), "application/pdf");
+        var res = client.multipart(form);
         assertEquals("multi", res);
     }
 }
